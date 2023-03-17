@@ -1,0 +1,60 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Color {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  hex   String
+  Lamps Lamp[]
+}
+
+model Lamp {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  status     Boolean   @default(false)
+  lastOn     DateTime?
+  lastOff    DateTime?
+  autoStatus Boolean   @default(false)
+  autoStart  DateTime?
+  autoFinish DateTime?
+  color      Color     @relation(fields: [colorId], references: [id])
+  colorId    String    @db.ObjectId
+}
+
+model Socket {
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  status  Boolean   @default(false)
+  lastOn  DateTime?
+  lastOff DateTime?
+}
+
+model VaccumCleaner {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  status           Boolean   @default(false)
+  startCleaning    DateTime?
+  waterCleaning    Boolean   @default(false)
+  cleaningDuration Int       @default(5)
+  lastCleaning     DateTime?
+}
+
+enum LogType {
+  LAMP  @map("lamp")
+  SOCKET   @map("socket")
+  CLEANER   @map("cleaner")
+}
+
+model Log {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type LogType
+  text String
+  name String
+  time DateTime? @default(now())
+}
