@@ -1,23 +1,19 @@
-import { useStoreon } from 'storeon/react' 
-import dayjs, { Dayjs } from 'dayjs';
+import { User } from '@prisma/client';
 import { createStoreon, StoreonModule } from 'storeon'
 
 export interface State {
-  time: Dayjs
-  on: boolean
+  user: User | null
 }
 
 export interface Events {
-  'set': Dayjs,
-  'on': undefined,
-  'off': undefined,
+  'set': User,
+  'delete': undefined,
 }
 
 const timer: StoreonModule<State, Events> = store => {
-  store.on('@init', () => ({ time: dayjs(), on: true}))
-  store.on('set', (state, event) => ({ ...state, time: event, }))
-  store.on('on', (state) => ({ ...state, on: true }))
-  store.on('off', (state) => ({ ...state, on: false }))
+  store.on('@init', () => ({ user: null }))
+  store.on('set', (state, event) => ({ ...state, user: event, }))
+  store.on('delete', (state) => ({ ...state, user: null, }))
 }
 
 const store = createStoreon<State, Events>([timer])

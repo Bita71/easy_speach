@@ -7,54 +7,37 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Color {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  hex   String
-  Lamps Lamp[]
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  login     String    @unique
+  password  String
+  createdAt DateTime? @default(now())
+  Hystory   Hystory[]
 }
 
-model Lamp {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  status     Boolean   @default(false)
-  lastOn     DateTime?
-  lastOff    DateTime?
-  autoStatus Boolean   @default(false)
-  autoStart  DateTime?
-  autoFinish DateTime?
-  color      Color     @relation(fields: [colorId], references: [id])
-  colorId    String    @db.ObjectId
+enum ComplexityType {
+  EASY   @map("easy")
+  MEDIUM @map("medium")
+  HARD   @map("hard")
 }
 
-model Socket {
-  id      String    @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  status  Boolean   @default(false)
-  lastOn  DateTime?
-  lastOff DateTime?
+model Phrase {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  text       String         @unique
+  complexity ComplexityType
+  Hystory    Hystory[]
 }
 
-model VaccumCleaner {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  status           Boolean   @default(false)
-  startCleaning    DateTime?
-  waterCleaning    Boolean   @default(false)
-  cleaningDuration Int       @default(5)
-  lastCleaning     DateTime?
-}
-
-enum LogType {
-  LAMP  @map("lamp")
-  SOCKET   @map("socket")
-  CLEANER   @map("cleaner")
-}
-
-model Log {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  type LogType
-  text String
-  name String
-  time DateTime? @default(now())
+model Hystory {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  user          User      @relation(fields: [userId], references: [id])
+  phrase        Phrase    @relation(fields: [phraseId], references: [id])
+  result        Int
+  attemptsCount Int       @default(0)
+  skipped       Boolean?  @default(false)
+  createdAt     DateTime? @default(now())
+  updatedAt     DateTime? @default(now())
+  userId        String    @db.ObjectId
+  phraseId      String    @db.ObjectId
 }
