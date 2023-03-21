@@ -153,6 +153,7 @@ function Hystory() {
           }}
         >
           <Table
+            // @ts-ignore
             columns={columns}
             dataSource={tableData}
             pagination={false}
