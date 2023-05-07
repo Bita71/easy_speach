@@ -48,7 +48,7 @@ export const Header: FC = () => {
             className={styles.title}
           >
             <DingtalkOutlined style={{ marginRight: ".25em" }} />
-            Easy Speach
+            Easy Speech
           </Title>
         </Link>
       </Col>
